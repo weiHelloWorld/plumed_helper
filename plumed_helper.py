@@ -61,11 +61,10 @@ class Plumed_helper(object):
 
     @staticmethod
     def get_ANN_expression(mode, node_num, ANN_weights, ANN_bias, activation_list):
-        # FIXME: not finished
         result = ''
         if mode == "native":   # using native implementation by PLUMED (using COMBINE and MATHEVAL)
             result += "bias_const: CONSTANT VALUE=1.0\n"  # used for bias
-            for layer_index in range(1, self._index_CV + 1):
+            for layer_index in range(1, len(node_num)):
                 for item in range(node_num[layer_index]):
                     result += "l_%d_in_%d: COMBINE PERIODIC=NO COEFFICIENTS=" % (
                         layer_index, item)
@@ -88,8 +87,7 @@ class Plumed_helper(object):
                     result += "sum_output_layer: MATHEVAL ARG="
                     for item in range(node_num[layer_index]):
                         result += 'l_%d_in_%d,' % (layer_index, item)
-                    # remove last ','
-                    result = result[:-1] + ' VAR='
+                    result = result[:-1] + ' VAR='   # remove last ','
                     for item in range(node_num[layer_index]):
                         result += 't_var_%d,' % item
                     result = result[:-1] + ' FUNC='
@@ -100,13 +98,12 @@ class Plumed_helper(object):
                         result += 'l_%d_out_%d: MATHEVAL ARG=l_%d_in_%d,sum_output_layer FUNC=exp(x)/y PERIODIC=NO\n' % (
                             layer_index, item, layer_index, item)
         elif mode == "ANN":  # using ANN class
-            temp_num_of_layers_used = self._index_CV + 1
+            temp_num_of_layers_used = len(node_num)
             temp_input_string = ','.join(
                 ['l_0_out_%d' % item for item in range(node_num[0])])
             temp_num_nodes_string = ','.join(
                 [str(item) for item in node_num[:temp_num_of_layers_used]])
-            temp_layer_type_string = CONFIG_17[:2]
-            temp_layer_type_string = ','.join(temp_layer_type_string)
+            temp_layer_type_string = ','.join(activation_list)
             temp_coeff_string = ''
             temp_bias_string = ''
             for _1, item_coeff in enumerate(ANN_weights[:temp_num_of_layers_used - 1]):
