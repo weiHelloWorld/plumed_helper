@@ -44,9 +44,20 @@ class Plumed_helper(object):
         return result
 
     @staticmethod
-    def get_minmax_scale(in_var_prefix, out_var_prefix, ):
-        # TODO
-        return
+    def shift_scale(in_var_prefix, out_var_prefix, scale_list, offset_list):
+        result = ''
+        for item, (scale, offset) in enumerate(zip(scale_list, offset_list)):
+            result += '%s%d: COMBINE COEFFICIENTS=%f PARAMETERS=%f ARG=%s%d PERIODIC=NO\n' % (
+                out_var_prefix, item, scale, -offset / scale, in_var_prefix, item 
+            )
+        return result
+    
+    @staticmethod
+    def get_minmax_scale(in_var_prefix, out_var_prefix, minmax_scaler):
+        # minmax_scaler is a sklearn scaler object
+        from sklearn.preprocessing import MinMaxScaler
+        assert (isinstance(minmax_scaler, MinMaxScaler))
+        return Plumed_helper.shift_scale(in_var_prefix, out_var_prefix, minmax_scaler.scale_, minmax_scaler.min_)
 
     @staticmethod
     def get_ANN_expression(mode, node_num, ANN_weights, ANN_bias, activation_list):
