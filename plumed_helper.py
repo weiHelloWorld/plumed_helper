@@ -78,12 +78,12 @@ class Plumed_helper(object):
                         result += 'l_%d_out_%d,' % (layer_index - 1, _1)
                     result += 'bias_const\n'
 
-                if activation_list[layer_index - 1] == 'tanh':
+                if activation_list[layer_index - 1].lower() == 'tanh':
                     for item in range(node_num[layer_index]):
                         result += 'l_%d_out_%d: MATHEVAL ARG=l_%d_in_%d FUNC=tanh(x) PERIODIC=NO\n' % (
                             layer_index, item, layer_index, item)
                 # generalization for classifier
-                elif activation_list[layer_index - 1] == 'softmax':
+                elif activation_list[layer_index - 1].lower() == 'softmax':
                     result += "sum_output_layer: MATHEVAL ARG="
                     for item in range(node_num[layer_index]):
                         result += 'l_%d_in_%d,' % (layer_index, item)
@@ -96,6 +96,10 @@ class Plumed_helper(object):
                     result = result[:-1] + ' PERIODIC=NO\n'
                     for item in range(node_num[layer_index]):
                         result += 'l_%d_out_%d: MATHEVAL ARG=l_%d_in_%d,sum_output_layer FUNC=exp(x)/y PERIODIC=NO\n' % (
+                            layer_index, item, layer_index, item)
+                elif activation_list[layer_index - 1].lower() == 'linear':
+                    for item in range(node_num[layer_index]):
+                        result += 'l_%d_out_%d: MATHEVAL ARG=l_%d_in_%d FUNC=x PERIODIC=NO\n' % (
                             layer_index, item, layer_index, item)
         elif mode == "ANN":  # using ANN class
             temp_num_of_layers_used = len(node_num)
