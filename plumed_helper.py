@@ -30,17 +30,16 @@ class Plumed_helper(object):
         return result
 
     @staticmethod
-    def get_pairwise_dis(index_atoms, scaling_factor, unit_scaling,
-                         out_var_prefix='l_0_out_'):
+    def get_pairwise_dis(pair_index, scaling_factor, unit_scaling, 
+                           out_var_prefix='l_0_out_'):
         result = ''
         index_input = 0
-        for item_1 in range(len(index_atoms)):
-            for item_2 in range(item_1 + 1, len(index_atoms)):
-                result += "dis_%d:  DISTANCE ATOMS=%d,%d\n" % (
-                    index_input, index_atoms[item_1], index_atoms[item_2])
-                result += "%s%d: COMBINE PERIODIC=NO COEFFICIENTS=%f ARG=dis_%d\n" % (
-                    out_var_prefix, index_input, unit_scaling / scaling_factor, index_input)
-                index_input += 1
+        for item_1, item_2 in pair_index:
+            result += "dis_%d:  DISTANCE ATOMS=%d,%d\n" % (
+                index_input, item_1, item_2)
+            result += "%s%d: COMBINE PERIODIC=NO COEFFICIENTS=%f ARG=dis_%d\n" % (
+                out_var_prefix, index_input, unit_scaling / scaling_factor, index_input)
+            index_input += 1
         return result
 
     @staticmethod
