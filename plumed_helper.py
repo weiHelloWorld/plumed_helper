@@ -110,14 +110,14 @@ class Plumed_helper(object):
             temp_coeff_string = ''
             temp_bias_string = ''
             for _1, item_coeff in enumerate(ANN_weights[:temp_num_of_layers_used - 1]):
-                temp_coeff_string += ' COEFFICIENTS_OF_CONNECTIONS%d=%s' % \
+                temp_coeff_string += ' WEIGHTS%d=%s' % \
                                      (_1, ','.join([str(item)
                                                     for item in item_coeff]))
             for _1, item_bias in enumerate(ANN_bias[:temp_num_of_layers_used - 1]):
-                temp_bias_string += ' VALUES_OF_BIASED_NODES%d=%s' % \
+                temp_bias_string += ' BIASES%d=%s' % \
                     (_1, ','.join([str(item) for item in item_bias]))
 
-            result += "ann_force: ANN ARG=%s NUM_LAYERS=%d NUM_OF_NODES=%s LAYER_TYPES=%s %s %s" % \
+            result += "ann_force: ANN ARG=%s NUM_LAYERS=%d NUM_NODES=%s ACTIVATIONS=%s %s %s" % \
                 (temp_input_string, temp_num_of_layers_used, temp_num_nodes_string, temp_layer_type_string,
                  temp_coeff_string, temp_bias_string)
         else:
